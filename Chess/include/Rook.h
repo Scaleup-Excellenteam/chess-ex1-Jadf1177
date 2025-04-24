@@ -1,0 +1,9 @@
+#pragma once
+#include "ChessUnit.h"
+
+class Rook : public ChessUnit {
+public:
+    Rook(bool light, int y, int x);
+    bool validate(int targetY, int targetX, const Board& board) const override;
+    char symbol() const override;
+};
