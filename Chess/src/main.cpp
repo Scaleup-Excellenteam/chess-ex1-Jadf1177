@@ -1,83 +1,110 @@
+// Chess 
+#include "Chess.h"
+#include <sstream>
 #include "Board.h"
-#include <iostream>
-#include <string>
-#include <Chess.h>
+int main()
+{
+	string board = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr";
+	//string board = "R###K##R####PPPPb###############################ppppppppr###k##r";// to check castling
+	//string board = "RNBQK###PPPPPPPP##################################P##P######kbnr";// to check pawn promotion
 
-using namespace std;
+	Chess a(board);
 
-int main() {
-    string boardStr = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr";
-    Chess a(boardStr);
-    Board myBoard(boardStr);
-    bool currentTurn = true; // true for white's turn
+    Board myBoard(board);
+	char myColor = 'W';
 
-    int codeResponse = 0;
-    string res = a.getInput();
-    while (res != "exit") {
-        codeResponse = 0;
+	int depth;
+	std::cout << "Enter the depth for move evaluation (up to 2): ";
+	std::cin >> depth;
 
-        if (res.length() != 4) {
-            codeResponse = 11;
-            a.setCodeResponse(codeResponse);
-            res = a.getInput();
-            continue;
+	if (depth < 1 || depth > 2) {
+		std::cerr << "Invalid depth. Setting depth to 2." << std::endl;
+		depth = 2;
+	}
+
+	int codeResponse = 0;
+	a.SetEvaluateMove(myBoard.getBestMove(myColor, depth));
+	string res = a.getInput();
+
+	
+	while (res != "exit")
+	{
+
+		/* 
+		codeResponse value : 
+		Illegal movements : 
+		11 - there is not piece at the source  
+		12 - the piece in the source is piece of your opponent
+		13 - there one of your pieces at the destination 
+		21 - illegal movement of that piece 
+		31 - this movement will cause you checkmate
+
+		legal movements : 
+		41 - the last movement was legal and cause check 
+		42 - the last movement was legal, next turn 
+		43 - castling 
+		44 - chess
+		45- pawn promotion
+		*/
+
+		{ // put your code here instead that code
+
+			// Smart move to checkmate:
+			// senario01- black wins: b6c6 g5e5 b7d7 h4d8 
+			// senario02- white wins: b5d5 g5e5 a6d3 h2f3 a4c6 g4f4 c6g6 
+			// senario03- white wins: b5d5 g5e5 a4e8 h5g5 e8e5
+			/*
+			NOTE: During these smart moves, observe the recommended moves for the winning player.
+			You'll notice that they match the moves I've written.
+			This is because the depth 2 evaluation accurately identifies the best moves.
+
+			For example, in scenario 01, the black player is recommended to move from 
+			g5 to e5 (which brings them closer to winning), and then from h4 to d8 (to achieve checkmate).
+			*/
+
+            std::stringstream stringNumber1,stringNumber2;
+            stringNumber1 << res[1];
+            stringNumber2 << res[3];
+
+            int currentColumn,
+            goalColumn,
+            currentRow = res[0] - 'a',
+            goalRow = res[2] - 'a';
+
+            stringNumber1 >> currentColumn;
+            stringNumber2 >> goalColumn;
+            currentColumn--;
+            goalColumn--;
+
+            codeResponse = myBoard.checkMove(currentRow,currentColumn ,goalRow,goalColumn, myColor);
+			
+			
+			if (codeResponse == 45)
+				a.setpawnChangedTo(myBoard.getPawnPromotionValue());
+
+			if (codeResponse >= 41 && codeResponse <= 45)
+				myColor = (myColor == 'W' ? 'B' : 'W');
+			
+
+			if (myBoard.getGameState() == Board::GameState::WHITE_WIN) { 
+				a.setGameState(Chess::WHITE_WIN);
+			}else if (myBoard.getGameState() == Board::GameState::BLACK_WIN) {
+				a.setGameState(Chess::BLACK_WIN);
+			}else if (myBoard.getGameState() == Board::GameState::DRAW) {
+				a.setGameState(Chess::DRAW); 
+			} 
         }
 
-        char srcFile = res[0];
-        char srcRank = res[1];
-        char destFile = res[2];
-        char destRank = res[3];
+			a.setCodeResponse(codeResponse);
 
-        int srcRow = 'h' - srcFile;
-        int srcCol = srcRank - '1';
-        int destRow = 'h' - destFile;
-        int destCol = destRank - '1';
+			a.SetEvaluateMove(myBoard.getBestMove(myColor, depth));
 
-        if (srcRow < 0 || srcRow >= 8 || srcCol < 0 || srcCol >= 8 ||
-            destRow < 0 || destRow >= 8 || destCol < 0 || destCol >= 8) {
-            codeResponse = 11;
-        }
-        else {
-            ChessUnit* srcPiece = myBoard.fetch(srcRow, srcCol);
-            if (!srcPiece) {
-                codeResponse = 11;
-            }
-            else if (srcPiece->lightSide() != currentTurn) {
-                codeResponse = 12;
-            }
-            else {
-                ChessUnit* destPiece = myBoard.fetch(destRow, destCol);
-                if (destPiece && destPiece->lightSide() == currentTurn) {
-                    codeResponse = 13;
-                }
-                else if (!srcPiece->validate(destRow, destCol, myBoard)) {
-                    codeResponse = 21;
-                }
+			res = a.getInput();
+			
+			//getPawnPromotionValue()
 
-                else {
-                    Board tempBoard = myBoard;
-                    tempBoard.move(srcRow, srcCol, destRow, destCol);
-                    if (tempBoard.checkThreat(currentTurn)) {
-                        codeResponse = 31;
-                    }
-                    else {
-                        bool opponentInCheck = tempBoard.checkThreat(!currentTurn);
-                        codeResponse = opponentInCheck ? 41 : 42;
-                    }
-                }
-            }
-        }
+	}
 
-        a.setCodeResponse(codeResponse);
-
-        if (codeResponse == 41 || codeResponse == 42) {
-            myBoard.move(srcRow, srcCol, destRow, destCol);
-            currentTurn = !currentTurn;
-        }
-
-        res = a.getInput();
-    }
-
-    cout << endl << "Exiting " << endl;
-    return 0;
+	cout << endl << "Exiting " << endl; 
+	return 0;
 }

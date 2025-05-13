@@ -8,22 +8,19 @@ int ChessUnit::getX() const { return x; }
 int ChessUnit::getY() const { return y; }
 void ChessUnit::relocate(int newRow, int newCol) { x = newRow; y = newCol; }
 
-bool ChessUnit::pathObstructed(int destRow, int destCol, const Board& board) const {
-    int rowStep = (destRow > x) ? 1 : (destRow < x) ? -1 : 0;
-    int colStep = (destCol > y) ? 1 : (destCol < y) ? -1 : 0;
+bool ChessUnit::pathObstructed(int ty, int tx, const Board& board) const {
+    int dx = (tx > x) ? 1 : (tx < x) ? -1 : 0;
+    int dy = (ty > y) ? 1 : (ty < y) ? -1 : 0;
 
-    int steps = std::max(abs(destRow - x), abs(destCol - y));
+    int currentX = x + dx;
+    int currentY = y + dy;
 
-    int currentRow = x + rowStep;
-    int currentCol = y + colStep;
-
-    for (int i = 0; i < steps - 1; ++i) {
-        if (board.fetch(currentRow, currentCol) != nullptr) {
-            return false;
+    while (currentX != tx || currentY != ty) {
+        if (board.fetch(currentY, currentX) != nullptr) {
+            return true; // Corrected to return true when obstructed
         }
-        currentRow += rowStep;
-        currentCol += colStep;
+        currentX += dx;
+        currentY += dy;
     }
-
-    return true;
+    return false;
 }
