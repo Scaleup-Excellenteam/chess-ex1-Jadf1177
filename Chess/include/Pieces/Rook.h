@@ -2,7 +2,7 @@
 #include "Piece.h"
 #include "Board.h"
 
-class Rook : virtual public Piece {
+class Rook : public virtual Piece {
     
 public:
     Rook(const char color, const char name) : Piece(color, name), FirstMove(true) {}
