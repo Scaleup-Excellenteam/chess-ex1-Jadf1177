@@ -2,6 +2,7 @@
 #include "Chess.h"
 #include <sstream>
 #include "Board.h"
+
 int main()
 {
 	string board = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr";
@@ -112,7 +113,20 @@ int main()
 
 			if (codeResponse >= 41 && codeResponse <= 45)
 				myColor = (myColor == 'W' ? 'B' : 'W');
-			
+			Board::Color colorEnum = (myColor == 'W') ? Board::Color::WHITE : Board::Color::BLACK;
+			if (myBoard.isCheckmate(colorEnum)) {
+				if (myColor == 'W') {
+					std::cout << "Checkmate! Black wins!\n";
+					a.setGameState(Chess::BLACK_WIN);
+				} else {
+					std::cout << "Checkmate! White wins!\n";
+					a.setGameState(Chess::WHITE_WIN);
+				}
+				break;
+			}
+
+
+
 			if (myBoard.getGameState() == Board::GameState::WHITE_WIN) { 
 				a.setGameState(Chess::WHITE_WIN);
 			}else if (myBoard.getGameState() == Board::GameState::BLACK_WIN) {

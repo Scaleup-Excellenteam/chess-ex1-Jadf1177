@@ -3,7 +3,11 @@
 #include <algorithm>
 
 ChessUnit::ChessUnit(bool isLight, int y, int x) : isLight(isLight), y(y), x(x) {}
-bool ChessUnit::lightSide() const { return isLight; }
+
+bool ChessUnit::lightSide() const {
+    return isLight;
+}
+
 int ChessUnit::getX() const { return x; }
 int ChessUnit::getY() const { return y; }
 void ChessUnit::relocate(int newRow, int newCol) { x = newRow; y = newCol; }
@@ -16,7 +20,7 @@ bool ChessUnit::pathObstructed(int ty, int tx, const Board& board) const {
     int currentY = y + dy;
 
     while (currentX != tx || currentY != ty) {
-        if (board.fetch(currentY, currentX) != nullptr) {
+        if (board.getPiece(currentY, currentX) != nullptr) {
             return true; // Corrected to return true when obstructed
         }
         currentX += dx;
