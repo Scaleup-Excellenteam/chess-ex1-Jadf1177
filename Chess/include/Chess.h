@@ -1,6 +1,10 @@
 #pragma once
-#include <iostream>
+
+#ifdef _WIN32
 #include <Windows.h>
+#endif
+
+#include <iostream>
 #include <string>
 #include "Move.h"
 using std::cout;
