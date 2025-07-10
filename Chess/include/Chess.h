@@ -1,11 +1,12 @@
 #pragma once
-#include <iostream>
+
 #ifdef _WIN32
 #include <Windows.h>
 #endif
 
+#include <iostream>
 #include <string>
-
+#include "Move.h"
 using std::cout;
 using std::cin; 
 using std::endl;
@@ -21,6 +22,8 @@ class Chess {
 	string m_msg = "\n";
 	string m_errorMsg = "\n";
 	int m_codeResponse;
+	Move move;
+	char pawnChangedTo;
 
 	void clear() const;
 	void setFrames();
@@ -33,6 +36,8 @@ class Chess {
 	bool isExit() const;
 	void excute();
 	void doTurn();
+	void executeCastling();
+	void excutePromotePawn(char pawnChangedTo);
 
 public:
 	Chess(const string& start = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr");
@@ -40,4 +45,11 @@ public:
 	Chess& operator=(const Chess&) = delete;
 	string getInput();
 	void setCodeResponse(int codeResponse);
+	void SetEvaluateMove(Move move);
+	enum GameState { WHITE_WIN, BLACK_WIN, DRAW, STILL_PLAYING };
+	GameState gameState;
+	void setGameState(GameState state); 
+	void changeBoardString(string newBoard);
+	void setpawnChangedTo(char pawnChangedTo);
+
 };

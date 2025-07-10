@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 
 class Board;
 
@@ -22,4 +23,5 @@ public:
     void relocate(int ny, int nx); 
 
     bool pathObstructed(int ty, int tx, const Board& board) const;
+    virtual std::vector<std::pair<int, int>> generateMoves(const Board& board) const = 0;
 };

@@ -1,5 +1,8 @@
 #include "Queen.h"
 #include "Board.h"
+#include "Rook.h"
+#include "Bishop.h"
+#include <vector>
 
 Queen::Queen(bool light, int y, int x) : ChessUnit(light, y, x) {}
 
@@ -13,4 +16,20 @@ bool Queen::validate(int ty, int tx, const Board& board) const {
 
 char Queen::symbol() const {
     return isLight ? 'Q' : 'q';
+}
+
+std::vector<std::pair<int, int>> Queen::generateMoves(const Board& board) const {
+    std::vector<std::pair<int, int>> moves;
+
+    // Combine rook and bishop moves
+    Rook tempRook(isLight, y, x);
+    Bishop tempBishop(isLight, y, x);
+
+    auto rookMoves = tempRook.generateMoves(board);
+    auto bishopMoves = tempBishop.generateMoves(board);
+
+    moves.insert(moves.end(), rookMoves.begin(), rookMoves.end());
+    moves.insert(moves.end(), bishopMoves.begin(), bishopMoves.end());
+
+    return moves;
 }
