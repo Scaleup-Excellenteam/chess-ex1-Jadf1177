@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <memory>  
+#include "ChessUnit.h"
 
 /**
  * @brief Constructs the Board and sets up the initial pieces.
@@ -109,6 +110,49 @@ void Board::setupBoard(const std::string& boardStr) {
 }
 
 
+bool Board::isCheckmate(Color color) {
+    char colorChar = (color == Color::WHITE ? 'W' : 'B');
+    if (!isKingInCheck(colorChar)) return false;
+
+    std::vector<Move> legalMoves = getAllLegalMoves(color);
+    return legalMoves.empty();
+}
+
+
+std::vector<Move> Board::getAllLegalMoves(Color color) {
+    std::vector<Move> allMoves;
+
+    for (int row = 0; row < 8; ++row) {
+        for (int col = 0; col < 8; ++col) {
+            auto unit = board[row][col]; // shared_ptr<Piece>
+            ChessUnit* cu = dynamic_cast<ChessUnit*>(unit.get());
+
+            if (cu && (cu->lightSide() == (color == Color::WHITE))) {
+                auto candidateMoves = cu->generateMoves(*this);
+
+                for (const auto& movePair : candidateMoves) {
+                    int toRow = movePair.first;
+                    int toCol = movePair.second;
+
+                    Move move(row, col, toRow, toCol, 0); // score = 0
+                    Board tempBoard = *this;
+                    tempBoard.applyMove(move);
+
+                    if (!tempBoard.isKingInCheck(color == Color::WHITE ? 'W' : 'B')) {
+                        allMoves.push_back(move);
+                    }
+                }
+            }
+        }
+    }
+
+    return allMoves;
+}
+
+
+void Board::applyMove(const Move& move) {
+    checkMove(move.getFromRow(), move.getFromCol(), move.getToRow(), move.getToCol(), 'W'); // Or 'B'
+}
 
 
 

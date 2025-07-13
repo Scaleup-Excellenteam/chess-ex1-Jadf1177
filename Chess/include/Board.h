@@ -9,9 +9,14 @@
 
 const int BOARD_SIZE = 8;
 
+
+
 class Board {
 public:
-   
+    enum class Color {
+        WHITE,
+        BLACK
+    };
     enum GameState { WHITE_WIN, BLACK_WIN, DRAW, STILL_PLAYING };
     enum PawnPromotionValue {Q = 'Q',R = 'R',B = 'B',N = 'N',q = 'q',r = 'r',b = 'b',n = 'n'};
     Board();
@@ -28,6 +33,10 @@ public:
     bool handlePawnPromotion(int goalRow, std::shared_ptr<Piece>& piece);
     bool canEscapeCheck(const char color);
     PawnPromotionValue getPawnPromotionValue();
+    bool isCheckmate(Color color);
+    std::vector<Move> getAllLegalMoves(Color color);
+    void applyMove(const Move& move);
+
 private:
     std::vector<std::vector<std::shared_ptr<Piece>>> board;
     std::shared_ptr<Piece> createPiece(const char type, const char color);
