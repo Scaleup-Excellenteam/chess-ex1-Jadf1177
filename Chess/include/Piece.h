@@ -1,6 +1,12 @@
+/**
+ * @brief Base class for all chess pieces.
+ *
+ * This class defines common functionality for all chess pieces, including their color and name,
+ * as well as methods for checking the legality of moves.
+ */
 
 #pragma once
-class Board;
+class Board;  // Forward declaration to avoid circular dependency
 
 class Piece {
 protected:

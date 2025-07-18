@@ -1,28 +1,81 @@
-# Ignore build files and compiled binaries
-/build/
-/CMakeCache.txt
-/CMakeFiles/
-/*.o
-/*.a
-/*.so
-/*.exe
-/*.out
+# Compiled object files
+*.o
+*.obj
 
-# Ignore IDE and editor configuration files
-.vscode/
-.idea/
-*.swp
-*.swo
+# Precompiled Headers
+*.gch
+*.pch
 
-# Ignore GitHub Actions temporary files
-.github/workflows/*.log
-.github/workflows/*.cache
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
 
-# Ignore debugging and log files
+# Compiled Static libraries
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.csp
+
+# Generated files
 *.log
 *.tmp
 *.bak
+*.swp
 
-# Ignore temporary image cache
-img/cache/
+# IDE directories
+.vscode/
+.idea/
+*.code-workspace
 
+# Visual Studio files
+*.vs
+
+# CMake build directories
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Build directories
+build/
+Build/
+Debug/
+Release/
+
+# Qt Creator
+*.autosave
+*.user
+*.creator
+*.pro.user
+*.qbs.user
+*.qbs
+*.pro
+*.pri
+
+# Xcode
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.xcworkspace
+*.xcworkspacedata
+*.xcuserstate
+
+# JetBrains
+*.iml
+.idea/
+*.iws
+*.ipr
+
+# Other files
+*.DS_Store
+*.directory

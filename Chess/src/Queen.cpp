@@ -4,7 +4,8 @@
 #include "Bishop.h"
 #include <vector>
 
-Queen::Queen(bool light, int y, int x) : ChessUnit(light, y, x) {}
+Queen::Queen(bool light, int y, int x)
+    : Piece(light ? 'W' : 'B', 'Q'), Rook(light, y, x), Bishop(light, y, x), ChessUnit(light, y, x) {}
 
 bool Queen::validate(int ty, int tx, const Board& board) const {
     if ((y != ty && x != tx) && (abs(ty - y) != abs(tx - x))) return false;

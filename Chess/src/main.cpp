@@ -7,6 +7,7 @@ int main()
 	string board = "RNBQKBNRPPPPPPPP################################pppppppprnbqkbnr";
 	//string board = "R###K##R####PPPPb###############################ppppppppr###k##r";// to check castling
 	//string board = "RNBQK###PPPPPPPP##################################P##P######kbnr";// to check pawn promotion
+	//string board = "RNBQK#############################################P##P######kbnr";// to check pawn promotion
 
 	Chess a(board);
 
@@ -17,16 +18,44 @@ int main()
 	std::cout << "Enter the depth for move evaluation (up to 2): ";
 	std::cin >> depth;
 
-	if (depth < 1 || depth > 2) {
+	if (depth < 1 || depth > 3) {
 		std::cerr << "Invalid depth. Setting depth to 2." << std::endl;
 		depth = 2;
 	}
 
+	printf("\n");
 	int codeResponse = 0;
-	a.SetEvaluateMove(myBoard.getBestMove(myColor, depth));
+
+
+	int threadCounts[] = {  2, 4, 8 };
+
+	for (int threadCount : threadCounts) {
+		std::cout << "Running with " << threadCount << " threads." << std::endl;
+
+		auto start = std::chrono::high_resolution_clock::now();
+
+		
+		a.SetEvaluateMove(myBoard.getBestMove(myColor, depth, threadCount));
+
+		auto end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> elapsed = end - start;
+		std::cout << "Time taken: " << elapsed.count() << " seconds." << std::endl;
+		printf("\n");
+	}
+
+	int threadsNum;
+	std::cout << "Enter the Threads number (0 , 2 , 4 , 8): ";
+	std::cin >> threadsNum;
+
+	if (threadsNum != 2 && threadsNum != 4 && threadsNum != 8 && threadsNum <= 0) {
+		std::cerr << "Invalid Threads number. Setting Threads number to 1." << std::endl;
+		threadsNum = 1;
+	}
+
+	a.SetEvaluateMove(myBoard.getBestMove(myColor, depth, threadsNum));
+
 	string res = a.getInput();
 
-	
 	while (res != "exit")
 	{
 
@@ -77,15 +106,13 @@ int main()
             goalColumn--;
 
             codeResponse = myBoard.checkMove(currentRow,currentColumn ,goalRow,goalColumn, myColor);
-			
-			
+				
 			if (codeResponse == 45)
 				a.setpawnChangedTo(myBoard.getPawnPromotionValue());
 
 			if (codeResponse >= 41 && codeResponse <= 45)
 				myColor = (myColor == 'W' ? 'B' : 'W');
 			
-
 			if (myBoard.getGameState() == Board::GameState::WHITE_WIN) { 
 				a.setGameState(Chess::WHITE_WIN);
 			}else if (myBoard.getGameState() == Board::GameState::BLACK_WIN) {
@@ -100,9 +127,6 @@ int main()
 			a.SetEvaluateMove(myBoard.getBestMove(myColor, depth));
 
 			res = a.getInput();
-			
-			//getPawnPromotionValue()
-
 	}
 
 	cout << endl << "Exiting " << endl; 
